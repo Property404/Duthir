@@ -1,0 +1,8 @@
+*
+!src
+!src/Catch2
+!*.cpp
+!*.h
+!*.hpp
+!*.build
+!.gitignore
