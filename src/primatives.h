@@ -9,5 +9,10 @@ namespace Duthir{
 		// 		True - NUT is prime
 		// 		False - NUT is non-prime
 		bool isPrime(const mpz_class& nut);
+
+		// Input
+		// 		prime - prime number to be returned
+		// 		size - size in bits
+		void generatePrime(mpz_class& prime, int size);
 	};
 };
