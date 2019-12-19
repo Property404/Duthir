@@ -1,5 +1,6 @@
 *
 !src
+!src/tests
 !src/Catch2
 !*.cpp
 !*.h
