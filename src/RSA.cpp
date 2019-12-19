@@ -36,6 +36,15 @@ namespace Duthir
 			exponent = std::move(new_exponent);
 		}
 
+		void PublicKey::encrypt(mpz_class& ciphertext, const mpz_class& plaintext) const
+		{
+			mpz_powm(ciphertext.get_mpz_t(), plaintext.get_mpz_t(), getExponent().get_mpz_t(), getModulus().get_mpz_t());
+		}
+
+		void PrivateKey::decrypt(mpz_class& plaintext, const mpz_class& ciphertext) const
+		{
+			mpz_powm(plaintext.get_mpz_t(), ciphertext.get_mpz_t(), getExponent().get_mpz_t(), getModulus().get_mpz_t());
+		}
 		void KeyPair::generate(int size)
 		{
 			/*

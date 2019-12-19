@@ -22,11 +22,15 @@ namespace Duthir
 		class PublicKey:public AbstractRSAKey{
 			public:
 			PublicKey(){};
+
+			void encrypt(mpz_class& ciphertext, const mpz_class& plaintext) const;
 		};
 
 		class PrivateKey:public AbstractRSAKey{
 			public:
 			PrivateKey(){};
+
+			void decrypt(mpz_class& plaintext, const mpz_class& ciphertext) const;
 		};
 
 		class KeyPair{

@@ -28,6 +28,4 @@ TEST_CASE( "generatePrime test", "[generatePrime]" )
 		generatePrime(prime, size);
 		REQUIRE(mpz_probab_prime_p(prime.get_mpz_t(), 50)>0);
 	}
-	generatePrime(prime, 1024);
-	REQUIRE(mpz_probab_prime_p(prime.get_mpz_t(), 50)>0);
 }
