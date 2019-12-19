@@ -14,5 +14,10 @@ namespace Duthir{
 		// 		prime - prime number to be returned
 		// 		size - size in bits
 		void generatePrime(mpz_class& prime, int size);
+
+		// Input
+		// 		number - random number to be returned
+		// 		size - size in bits
+		void generateRandomNumber(mpz_class& number, int size);
 	};
 };

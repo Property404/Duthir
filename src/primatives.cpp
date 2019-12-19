@@ -1,4 +1,6 @@
 #include <gmpxx.h>
+#include <cstdint>
+#include <iostream>
 #include "primatives.h"
 namespace Duthir{
 	namespace Primatives{
@@ -31,23 +33,57 @@ namespace Duthir{
 
 		static bool isProbablyPrime(const mpz_class& n)
 		{
-			constexpr int rounds = 40;
+			constexpr int rounds = 30;
 			return !!mpz_probab_prime_p(n.get_mpz_t(), rounds);
+		}
+		
+		static uint32_t generateRandomWord()
+		{
+			auto urandom = fopen("/dev/urandom", "r");
+			uint32_t rv;
+			fread(&rv, sizeof(rv), 1, urandom);
+			fclose(urandom);
+			return rv;
+		}
+		void generateRandomNumber(mpz_class& number, int size)
+		{
+			number = 0;
+			for(int word=0;word<size/4;word++)
+			{
+				const uint32_t random_word = generateRandomWord();
+				for(int bit=0;bit<32;bit++)
+				{
+					if(word+bit >=size)
+						return;
+
+					const bool bit_value = random_word &
+						(1<<bit);
+
+					if(bit_value)
+						mpz_setbit(number.get_mpz_t(), bit+word*32);
+					else
+						mpz_clrbit(number.get_mpz_t(), bit+word*32);
+				}
+			}
 		}
 
 		void generatePrime(mpz_class& prime, int size)
 		{
-			gmp_randclass randobject(gmp_randinit_default);
-			mpz_class minimum_value;
-			mpz_class maximum_value;
-			mpz_ui_pow_ui(minimum_value.get_mpz_t(), 2, size-1);
-			mpz_ui_pow_ui(maximum_value.get_mpz_t(), 2, size);
-			minimum_value*=1.5;
-			const mpz_class difference = maximum_value - minimum_value;
-
+			prime = 0;
 			while(true)
 			{
-				prime = randobject.get_z_range(difference)+minimum_value;
+				if(prime == 0)
+				{
+					generateRandomNumber(prime, size);
+					mpz_setbit(prime.get_mpz_t(), size-1);
+					//has to be odd
+					mpz_setbit(prime.get_mpz_t(), 0);
+				}
+				else
+				{
+					mpz_nextprime(prime.get_mpz_t(), prime.get_mpz_t());
+				}
+
 				if(isProbablyPrime(prime))
 					return;
 			}

@@ -1,7 +1,6 @@
 #include "catch.hpp"
 #include <iostream>
 #include "primatives.h"
-#define NUMBER_OF_ISPRIME_TESTS 100
 using namespace Duthir::Primatives;
 
 TEST_CASE( "isPrime test", "[isPrime]" )
@@ -24,10 +23,11 @@ TEST_CASE( "isPrime test", "[isPrime]" )
 TEST_CASE( "generatePrime test", "[generatePrime]" )
 {
 	mpz_class prime;
-	for(int size=8;size<=40;size++)
-	for(int i=0;i<10;i++)
+	for(int size=8;size<=192;size+=2)
 	{
 		generatePrime(prime, size);
-		REQUIRE(isPrime(prime) == true);
+		REQUIRE(mpz_probab_prime_p(prime.get_mpz_t(), 50)>0);
 	}
+	generatePrime(prime, 1024);
+	REQUIRE(mpz_probab_prime_p(prime.get_mpz_t(), 50)>0);
 }
