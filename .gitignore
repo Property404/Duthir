@@ -2,6 +2,7 @@
 !src
 !src/tests
 !src/Catch2
+!LICENSE
 !*.cpp
 !*.h
 !*.hpp
