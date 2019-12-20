@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cassert>
 #include "primatives.h"
 #include "RSA.h"
 #include <ctime>
@@ -14,6 +15,11 @@ int main()
 	const auto d = key_pair.getPrivate().getExponent();
 
 	cout<<"modulus: "<<n<<endl;
+	cout<<"p: "<<key_pair.primes.first<<endl;
+	cout<<"q: "<<key_pair.primes.second<<endl;
+
+	assert(Duthir::Primatives::isPrime(key_pair.primes.first));
+	assert(Duthir::Primatives::isPrime(key_pair.primes.second));
 
 	cout<<"public-exponent: "<<e<<endl;
 	cout<<"private-exponent: "<<d<<endl;

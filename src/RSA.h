@@ -10,6 +10,7 @@ namespace Duthir
 			mpz_class exponent;
 			public:
 
+
 			const mpz_class& getModulus() const;
 			const mpz_class& getExponent() const;
 
@@ -40,7 +41,11 @@ namespace Duthir
 			public:
 			KeyPair(){};
 
+			std::pair<mpz_class, mpz_class> primes;
+			mpz_class lambda;
+
 			// Generate RSA key pair
+			void generate(mpz_class p=0, mpz_class q=0, mpz_class e=0);
 			void generate(int size);
 
 			// Get individual keys

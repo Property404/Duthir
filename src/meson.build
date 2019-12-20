@@ -9,7 +9,7 @@ common_sources = ['primatives.cpp', 'RSA.cpp']
 
 release_sources = common_sources + ['main.cpp']
 
-test_sources = common_sources + ['tests/main.cpp','tests/primatives.cpp']
+test_sources = common_sources + ['tests/main.cpp','tests/primatives.cpp', 'tests/rsa.cpp']
 
 executable('duthir', release_sources)
 

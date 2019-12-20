@@ -45,39 +45,74 @@ namespace Duthir
 		{
 			mpz_powm(plaintext.get_mpz_t(), ciphertext.get_mpz_t(), getExponent().get_mpz_t(), getModulus().get_mpz_t());
 		}
+
+		void KeyPair::generate(mpz_class p, mpz_class q, mpz_class e)
+		{
+			/*
+			 * from https://en.wikipedia.org/wiki/RSA_(cryptosystem)#Key_generation
+			 */
+			mpz_class d; 
+			mpz_class modulus = p*q;
+
+			// carmichael totient function of n
+			// = lcm(p-1, q-1)
+			p-=1; q-=1; 
+			mpz_lcm(lambda.get_mpz_t(), p.get_mpz_t(), q.get_mpz_t()); 
+			p+=1; q+=1;
+			
+			// Private exponent is the inverse of the public exponent mod lambda(modulus)
+			mpz_invert(d.get_mpz_t(), e.get_mpz_t(), lambda.get_mpz_t());
+
+
+			// Store values
+			public_key.setModulus(modulus);
+			public_key.setExponent(std::move(e));
+			private_key.setModulus(modulus);
+			private_key.setExponent(std::move(d));
+
+			primes.first = std::move(p);
+			primes.second = std::move(q);
+		}
+
 		void KeyPair::generate(int size)
 		{
 			/*
 			 * from https://en.wikipedia.org/wiki/RSA_(cryptosystem)#Key_generation
 			 */
+
+			// Recommended value
 			constexpr auto LARGE_E=(1<<16)+1;
+
+			// Use an insecure value for small keys
+			// since they're already insecure
 			constexpr auto SMALL_E=3;
 
+			// Message to be tested
+			constexpr auto message=42;
+			mpz_class cipher, decrypted_message;
+
+			mpz_class d,p,q,e;
 			
-			mpz_class p;
-			generatePrime(p, size/2);
+			while(true)
+			{
+				// Generate large primes
+				generatePrime(p, size/2);
+				do
+				{
+					generatePrime(q, size/2);
+				} while(q==p);
 
-			mpz_class q;
-			generatePrime(q, size/2);
-			mpz_class modulus = p*q;
 
-			p-=1;
-			q-=1;
+				// Public exponent
+				e = size<1024?SMALL_E:LARGE_E;
 
-			// carmichael totient function of n
-			// = lcm(p-1, q-1)
-			mpz_class lambda;
-			mpz_lcm(lambda.get_mpz_t(), p.get_mpz_t(), q.get_mpz_t());
+				generate(p,q,e);
 
-			mpz_class e = lambda>LARGE_E?SMALL_E:LARGE_E;
-
-			mpz_class d; 
-			mpz_invert(d.get_mpz_t(), e.get_mpz_t(), lambda.get_mpz_t());
-
-			public_key.setModulus(modulus);
-			public_key.setExponent(std::move(e));
-			private_key.setModulus(modulus);
-			private_key.setExponent(std::move(d));
+				public_key.encrypt(cipher, message);
+				private_key.decrypt(decrypted_message, cipher);
+				if(message == decrypted_message)
+					break;
+			}
 
 		}
 
